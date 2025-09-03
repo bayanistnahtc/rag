@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Environment variables
+.env
+
+# Testing
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Data
+data/*
+
+# IDE
+.vscode/
+
+# evaluation
+evaluation/
+evaluation_results/
+scripts/
+*.md

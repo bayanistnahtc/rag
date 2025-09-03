@@ -1,0 +1,79 @@
+services:
+  # FastAPI Backend Service
+  medrag-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: medrag-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+      - DOC_FILE_PATH=/app/data/pdfs
+      - LLM_MODEL_TYPE=${LLM_MODEL_TYPE}
+      - LLM_MODEL_NAME=${LLM_MODEL_NAME}
+      - LLM_MODEL_URL=${LLM_MODEL_URL}
+      - LLM_MODEL_API_KEY=${LLM_MODEL_API_KEY}
+      - DOCUMENT_SOURCE=${DOCUMENT_SOURCE}
+      - S3_ENDPOINT=${S3_ENDPOINT}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_KEY=${S3_SECRET_KEY}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+      - S3_SECURE=${S3_SECURE}
+      - S3_REGION=${S3_REGION}
+    volumes:
+      - ./data:/app/data
+      - ./vector_store:/app/vector_store
+      - ./cached_recordings:/app/cached_recordings
+    networks:
+      - medrag-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/query/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # Streamlit Frontend Service
+  medrag-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    container_name: medrag-frontend
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    environment:
+      # Use base URL; client builds /api/v1/... paths
+      - RAG_API_BASE_URL=http://medrag-backend:8000
+      # Pass S3 config for Streamlit S3 browser parity
+      - S3_ENDPOINT=${S3_ENDPOINT}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_KEY=${S3_SECRET_KEY}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+      - S3_SECURE=${S3_SECURE}
+      - S3_REGION=${S3_REGION}
+    volumes:
+      - ./data:/app/data
+    networks:
+      - medrag-network
+    depends_on:
+      - medrag-backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  medrag-network:
+    driver: bridge
+
+volumes:
+  cached_recordings:
+    driver: local

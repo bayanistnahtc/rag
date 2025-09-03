@@ -1,0 +1,46 @@
+[project]
+name = "medrag-assistant"
+version = "0.1.0"
+description = "RAG system for medical equipment support"
+authors = ["bayanistnahtc@gmail.com>"]
+readme = "README.md"
+requires-python = ">=3.12.4"
+dependencies = [
+    "faiss-cpu>=1.11.0.post1",
+    "fastapi>=0.116.1",
+    "langchain-community>=0.3.27",
+    "langchain-core>=0.3.69",
+    "langchain-huggingface>=0.3.0",
+    "langchain-mistralai>=0.2.11",
+    "langchain-openai>=0.3.28",
+    "loguru>=0.7.3",
+    "minio>=7.2.0",
+    "prometheus-client>=0.22.1",
+    "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.1",
+    "pymupdf>=1.26.3",
+    "pypdf>=5.8.0",
+    "python-dotenv>=1.1.1",
+    "rank-bm25>=0.2.2",
+    "sentence-transformers>=5.0.0",
+    "streamlit>=1.32.0",
+    "uvicorn>=0.35.0",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
+    "pytest-mock>=3.14.1",
+    "isort>=6.0.1",
+    "mypy>=1.17.0",
+    "pre-commit>=4.2.0",
+    "reportlab>=4.0.0",
+]
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
